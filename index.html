@@ -32,14 +32,15 @@
             background-color: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            font-size: 18px;
         }
 
-.container {
-    width: 90%;
-    max-width: 1000px;   /* ← ovo ograničava širinu */
-    margin: 0 auto;
-    padding: 20px;
-}
+        .container {
+            width: 92%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
         /* Navigacija */
         nav {
@@ -48,6 +49,8 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         nav .logo {
@@ -57,10 +60,15 @@
             letter-spacing: 1px;
         }
 
+        nav .nav-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
         nav a {
             color: var(--text-dim);
             text-decoration: none;
-            margin-left: 20px;
             font-size: 0.95rem;
             transition: color 0.2s;
         }
@@ -76,16 +84,16 @@
         }
 
         header h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             color: var(--accent);
             margin-bottom: 15px;
             letter-spacing: 1px;
         }
 
         header .tagline {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             color: var(--text-dim);
-            max-width: 650px;
+            max-width: 700px;
             margin: 0 auto 30px auto;
         }
 
@@ -135,7 +143,7 @@
             border: 1px solid #4338ca;
             padding: 20px;
             border-radius: 8px;
-            max-width: 650px;
+            max-width: 700px;
             margin: 0 auto;
             text-align: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -186,7 +194,7 @@
             border-radius: 8px;
             padding: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
@@ -244,7 +252,7 @@
 
         .why-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 25px;
         }
 
@@ -269,7 +277,7 @@
 
         .why-card p {
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
 
         /* Specs */
@@ -286,7 +294,7 @@
 
         .specs-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
         }
 
@@ -311,11 +319,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .spec-card p {
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
 
         .badge-dev {
@@ -329,6 +338,24 @@
             letter-spacing: 0.5px;
             font-weight: 600;
             vertical-align: middle;
+        }
+
+        /* Kontakt */
+        .contact-section {
+            padding: 60px 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .contact-section h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #f1f5f9;
+        }
+
+        .contact-section p {
+            color: var(--text-dim);
+            margin-bottom: 30px;
         }
 
         /* Footer */
@@ -353,8 +380,8 @@
         @media (max-width: 600px) {
             header h1 { font-size: 2.2rem; }
             header .tagline { font-size: 1rem; }
-            nav { flex-direction: column; gap: 15px; }
-            nav a { margin: 0 10px; }
+            nav { flex-direction: column; align-items: flex-start; }
+            nav .nav-links { justify-content: center; width: 100%; }
         }
     </style>
 </head>
@@ -365,11 +392,12 @@
         <!-- Navigacija -->
         <nav>
             <div class="logo">SrBin OS</div>
-            <div>
+            <div class="nav-links">
                 <a href="#screenshot">Prikaz</a>
                 <a href="#why">Zašto</a>
                 <a href="#specs">Arhitektura</a>
-                <a href="https://github.com/zmmaj" target="_blank">GitHub</a>
+                <a href="#contact">Kontakt</a>
+                <a href="https://github.com/zmmaj/SrBin-OS" target="_blank">GitHub</a>
             </div>
         </nav>
 
@@ -382,11 +410,11 @@
             </p>
 
             <div class="cta-group">
-                <a href="https://github.com/zmmaj" class="btn btn-primary" target="_blank">
+                <a href="https://github.com/zmmaj/SrBin-OS" class="btn btn-primary" target="_blank">
                     Prati razvoj
                 </a>
-                <a href="#screenshot" class="btn btn-secondary">
-                    Pogledaj prikaz
+                <a href="https://github.com/zmmaj/SrBin-OS/discussions/1" class="btn btn-secondary" target="_blank">
+                    💬 Pridruži se diskusiji
                 </a>
             </div>
 
@@ -407,8 +435,7 @@
             <p>Radna stanica sa terminalom, dvopismenom podrškom i grafičkim okruženjem.</p>
 
             <div class="screenshot-frame">
-                <!-- ZAMENI ovaj src svojom slikom -->
-                <img src="screenshot.png" alt="SrBin OS radna stanica" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'padding:80px; color:#64748b; text-align:center;\'>Dodaj screenshot.png u isti folder</div>';">
+                <img src="screenshot.png" alt="SrBin OS radna stanica">
             </div>
         </section>
 
@@ -501,260 +528,26 @@
             </div>
         </section>
 
-        <!-- Footer -->
-        <footer>
-            <p>&copy; 2026 SrBin OS Projekat / <a href="https://github.com/TVOJ-USERNAME" target="_blank">@zmmaj</a>.</p>
-            <p style="margin-top: 8px;">Slobodan za distribuciju i korišćenje.</p>
-        </footer>
-
-    </div>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="sr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SrBin OS - Zvanična Prezentacija</title>
-    <style>
-        /* Osnovni reset i tamna tema */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #0f141c;
-            color: #e2e8f0;
-            line-height: 1.6;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Hero sekcija */
-        header {
-            text-align: center;
-            padding: 80px 0 40px 0;
-            border-bottom: 1px solid #1e293b;
-        }
-
-        header h1 {
-            font-size: 3rem;
-            color: #38bdf8;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        header p {
-            font-size: 1.2rem;
-            color: #94a3b8;
-            max-width: 650px;
-            margin: 0 auto 30px auto;
-        }
-
-        /* Statusna kutija */
-        .status-container {
-            background-color: #1e1b4b;
-            border: 1px solid #4338ca;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 550px;
-            margin: 20px auto 0 auto;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .status-badge {
-            display: inline-block;
-            background-color: #ca8a04;
-            color: #ffffff;
-            padding: 4px 12px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            border-radius: 20px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .status-text {
-            color: #ddd6fe;
-            font-size: 1rem;
-        }
-
-        .status-text strong {
-            color: #f43f5e;
-        }
-
-        /* Tehničke specifikacije - Grid */
-        .specs-section {
-            padding: 60px 0;
-        }
-
-        .specs-section h2 {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 40px;
-            color: #f1f5f9;
-        }
-
-        .specs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .spec-card {
-            background-color: #1e293b;
-            padding: 25px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            transition: transform 0.2s;
-        }
-
-        .spec-card:hover {
-            transform: translateY(-4px);
-            border-color: #475569;
-        }
-
-        .spec-card h3 {
-            color: #38bdf8;
-            margin-bottom: 12px;
-            font-size: 1.3rem;
-        }
-
-        .spec-card p {
-            color: #cbd5e1;
-            font-size: 0.95rem;
-        }
-
-        /* Odeljak za terminal */
-        .preview-section {
-            background-color: #090d16;
-            border: 1px solid #1e293b;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 40px 0;
-            font-family: 'Courier New', Courier, monospace;
-            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.6);
-        }
-
-        .preview-header {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #1e293b;
-            padding-bottom: 10px;
-        }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        .dot-red { background-color: #ef4444; }
-        .dot-yellow { background-color: #eab308; }
-        .dot-green { background-color: #22c55e; }
-
-        .terminal-text {
-            color: #4ade80;
-            font-size: 0.95rem;
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px 0;
-            color: #64748b;
-            font-size: 0.9rem;
-            border-top: 1px solid #1e293b;
-            margin-top: 60px;
-        }
-
-        @media (max-width: 600px) {
-            header h1 { font-size: 2.2rem; }
-            header p { font-size: 1rem; }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <header>
-            <h1>SrBin OS</h1>
-            <p>Prilagođeni, brzi i nezavisni 64-bitni operativni sistem zasnovan na temeljno unapređenom <strong>HelenOS</strong> kernelu i podsistemima.</p>
-            
-            <!-- Trenutni status razvoja -->
-            <div class="status-container">
-                <span class="status-badge">U razvoju</span>
-                <p class="status-text">
-                    Zvanična ISO slika se priprema. Lansiranje prve verzije biće omogućeno čim se završi integracija <strong>Pauk browsera</strong> i <strong>Lapis</strong> podsistema.
-                </p>
-            </div>
-        </header>
-
-        <!-- Prikaz interfejsa -->
-        <div class="preview-section">
-            <div class="preview-header">
-                <div class="dot dot-red"></div>
-                <div class="dot dot-yellow"></div>
-                <div class="dot dot-green"></div>
-            </div>
-            <div class="terminal-text">
-                <p>SrBin OS Kernel učitan uspešno (ZmajSoft unapređeno HelenOS jezgro)...</p>
-                <p>Arhitektura provere: Potpuna 64-bitna podrška detektovana.</p>
-                <p>Podrška za pisma: Ćirilica i Latinica aktivne.</p>
-                <p>srbin-os$ls -la</p>
-                <p>srbin-os$ лс -ла</p>
-            </div>
-        </div>
-
-        <!-- Ključne komponente i specifikacije -->
-        <section class="specs-section">
-            <h2>Arhitektura i Ekosistem</h2>
-            <div class="specs-grid">
-                
-                <div class="spec-card">
-                    <h3>Unapređeni HelenOS</h3>
-                    <p>SrBin OS se direktno oslanja na HelenOS mikrokernelsku arhitekturu. Samo jezgro i vitalni sistemski podsistemi su značajno modifikovani i unapređeni, što sistemu pruža jedinstvenu stabilnost i brzinu.</p>
-                </div>
-
-                <div class="spec-card">
-                    <h3>Dvojezični Terminal</h3>
-                    <p>Sistem ima ugrađenu izvornu podršku za tastaturne rasporede i prepoznavanje sistemskih naredbi i komandi pisanih ravnopravno na ćiriličnom i latiničnom pismu.</p>
-                </div>
-
-                <div class="spec-card">
-                    <h3>Z-lang Jezik</h3>
-                    <p>Pored standardnog C okruženja, u toku je aktivan razvoj sopstvenog, namenskog programskog jezika pod nazivom Z-lang koji će biti usko integrisan u ekosistem operativnog sistema.</p>
-                </div>
-
-                <div class="spec-card">
-                    <h3>Pauk Web Browser</h3>
-                    <p>Izvorni, lagani web browser koji se razvija specijalno za ovaj OS. Pisan je u čistom C-u, fokusiran na modularnost, direktno renderovanje grafike u RGBA formatu i upotrebu TTF fontova.</p>
-                </div>
-
-                <div class="spec-card">
-                    <h3>Lapis Podsistem</h3>
-                    <p>Ključna komponenta sistema zadužena za obradu podataka i strukturu, koja radi u direktnoj sprezi sa unutrašnjim jezgrom kako bi osigurala brzo procesiranje resursa.</p>
-                </div>
-
-                <div class="spec-card">
-                    <h3>Otvoreni Ekosistem</h3>
-                    <p>Iako sam bazični ISO sistem dolazi u prekompajliranoj formi, sve prateće ugrađene aplikacije i alati biće otvorenog koda i dostupni zajednici na GitHub-u.</p>
-                </div>
-
+        <!-- Kontakt -->
+        <section class="contact-section" id="contact">
+            <h2>Kontakt i zajednica</h2>
+            <p>Za pitanja, predloge ili prijavu problema — pridruži se diskusiji ili otvori issue.</p>
+            <div class="cta-group">
+                <a href="https://github.com/zmmaj/SrBin-OS/discussions" class="btn btn-primary" target="_blank">
+                    💬 Diskusije
+                </a>
+                <a href="https://github.com/zmmaj/SrBin-OS/issues" class="btn btn-secondary" target="_blank">
+                    🐛 Prijavi problem
+                </a>
             </div>
         </section>
 
+        <!-- Footer -->
         <footer>
-            <p>&copy; 2026 SrBin OS Projekat / @zmmaj. Slobodan za distribuciju i korišćenje.</p>
+            <p>&copy; 2026 SrBin OS Projekat / <a href="https://github.com/zmmaj" target="_blank">@zmmaj</a>.</p>
+            <p style="margin-top: 8px;">Slobodan za distribuciju i korišćenje.</p>
         </footer>
+
     </div>
 
 </body>
