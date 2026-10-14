@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SrBin OS - Lista Podržanog Hardvera</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #0056b3;
+            border-bottom: 2px solid #00aeef;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #00aeef;
+            margin-top: 30px;
+            border-bottom: 1px solid #dddddd;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #0056b3;
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+        code {
+            background-color: #f1f1f1;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+            color: #0056b3;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #ffffff;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dddddd;
+        }
+        th {
+            background-color: #0056b3;
+            color: #ffffff;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .info-box {
+            background-color: #e6f7ff;
+            border-left: 4px solid #00aeef;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📑 SrBin OS - Lista Podržanog Hardvera (HCL)</h1>
+    
+    <div class="info-box">
+        <strong>Arhitektura sistema:</strong> SrBin OS je razvijen za standardnu <strong>IBM PC/AT x86_64</strong> arhitekturu sa PCI/PCIe topologijom magistrala. Kompatibilnost na realnom hardveru je određena integrisanim čipsetovima (Southbridge / PCH) i klasama kontrolera.
+    </div>
+
+    <h2>1. Matične ploče i matični čipsetovi (Core Chipsets)</h2>
+    <p>Sistem uspešno podiže osnovnu topologiju kroz korenu strukturu magistrala (<code>root</code>, <code>virt</code> i <code>platform/pc</code>). Nativno su podržani sledeći matični kontroleri:</p>
+    <ul>
+        <li><strong>Intel platforme:</strong> 
+            <ul>
+                <li><em>Legacy Southbridge:</em> Intel <strong>ICH6, ICH7, ICH8, ICH9 i ICH10</strong> (Kompletno emulirani kroz standardne QEMU i440FX i Q35 mašinske matrice).</li>
+                <li><em>Moderni PCH:</em> Intel <strong>6-Series (Cougar Point), 7-Series (Panther Point), 8-Series (Lynx Point) i 9-Series (Wildcat Point)</strong> platforme.</li>
+            </ul>
+        </li>
+        <li><strong>AMD platforme:</strong> AMD <strong>SB600, SB700, SB800 i SB900</strong> serije južnih mostova.</li>
+    </ul>
+
+    <h2>2. Podsistem za skladištenje podataka (Block Group)</h2>
+    <p>Drajveri iz ove grupe zaduženi su za prepoznavanje diskova i montiranje fajl sistema (<code>ext4fs</code>, <code>initrd.img</code>) na klijentske VFS portove:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Naziv drajvera</th>
+                <th>Identifikacioni stringovi (.ma)</th>
+                <th>Podržani interfejs / Hardver</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>ahci</strong></td>
+                <td><code>8086:2922</code>, <code>8086:2829</code>, <code>1002:4391</code><br>Klasni fallback: <code>pci/class=01&subclass=06&interface=01</code></td>
+                <td>SATA AHCI kontroleri (Intel ICH8M/ICH9, AMD SB serije). Generička klasa omogućava prepoznavanje AHCI diskova na gotovo svakoj pravoj mašini.</td>
+            </tr>
+            <tr>
+                <td><strong>PCI-IDE</strong></td>
+                <td><code>pci/ven=8086&dev=7010</code></td>
+                <td>Intel 82371SB (PIIX3) Bus Master IDE kontroler u kompatibilnom režimu (Standardni QEMU i440FX emulirani disk kontroler).</td>
+            </tr>
+            <tr>
+                <td><strong>usbmast</strong></td>
+                <td><code>usb&interface&class=mass-storage&subclass=0x06&protocol=0x50</code></td>
+                <td>USB fleš diskovi i eksterni diskovi (SCSI transparentni set komandi preko Bulk-Only transporta). Ima povišen prioritet uparivanja (Skor: 50).</td>
+            </tr>
+            <tr>
+                <td><strong>virtio-blk</strong></td>
+                <td><code>pci/ven=1af4&dev=1001</code>, <code>pci/ven=1af4&dev=1042</code></td>
+                <td>Paravirtualizovani diskovi unutar hipervizora (Red Hat VirtIO tehnologija - podržava i Legacy i Modern v1.0+ standarde).</td>
+            </tr>
+            <tr>
+                <td><strong>isa/ide</strong></td>
+                <td><code>isa/ide</code></td>
+                <td>Klasični Parallel ATA (PATA) IDE kontroleri na fiksnim portovima (0x1F0 i 0x170, IRQ 14/15).</td>
+            </tr>
+            <tr>
+                <td><strong>Pc-floppy</strong></td>
+                <td><code>isa/fdc</code></td>
+                <td>Standardni kontroler flopi disk jedinica na ISA magistrali (IRQ 6, DMA 2).</td>
+            </tr>
+            <tr>
+                <td><strong>ddisk</strong></td>
+                <td><code>msim/ddisk</code></td>
+                <td>Specijalizovani paravirtualizovani disk drajver za MIPS (MSIM) simulatorsko okruženje.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>3. Mrežni podsistem (Network Group)</h2>
+    <p>Sistem podržava stabilnu mrežnu komunikaciju na realnom hardveru i emuliranim mrežnim adapterima:</p>
+    <ul>
+        <li><strong>e1K (Intel PRO/1000):</strong> Podržava matricu od 25 različitih Intel desktop i server Gigabit adaptera. Primarna meta je <strong>Intel 82540EM (<code>dev=100e</code>)</strong>, što je standardni mrežni uređaj emuliran kroz QEMU komandu <code>-device e1000</code>.</li>
+        <li><strong>rtl8169 (Realtek PCIe Gigabit):</strong> Kompletna bare-metal kompatibilnost sa <strong>Realtek RTL8168 / RTL8111</strong> čipovima koji su integrisani na većini savremenih matičnih ploča, kao i sa D-Link GGE-528T (<code>dev=4300</code>) karticama.</li>
+        <li><strong>rtl8139 (Realtek Fast Ethernet):</strong> Podrška za starije, lagane 10/100 Mbps kartice (<code>dev=8139</code>), idealne za testiranje mrežnog steka.</li>
+        <li><strong>isa/ne2k (NE2000):</strong> Drajver za legendarne ISA mrežne kartice na fiksnoj adresi <code>0x300</code> i IRQ 9.</li>
+        <li><strong>ar9271 (Atheros Bežična Mreža):</strong> Namenski USB drajver za <strong>Atheros AR9271 Wi-Fi</strong> adaptere (Skor: 90). Koristi 100% open-source firmware (ath9k_htc) za rad sa sirovim Wi-Fi okvirima.</li>
+    </ul>
+
+    <h2>4. Magistrale, Mostovi i USB koren (BUS Group)</h2>
+    <ul>
+        <li><strong>intel_pci:</strong> Glavni PCI skener zadužen za dinamičko pretraživanje slotova i generisanje konfiguracionih stringova za <code>devman</code>.</li>
+        <li><strong>pci/class=06&subclass=01:</strong> Most sa PCI na ISA magistralu (U QEMU-u mapira PIIX3 Southbridge za rutiranje prekida).</li>
+        <li><strong>USB Host Kontroleri:</strong> 
+            <ul>
+                <li>Moderni <strong>xHCI (<code>progif=30</code>)</strong> za USB 3.0+ SuperSpeed portove (Podržava QEMU <code>nec-usb-xhci</code>).</li>
+                <li>Legacy fallbacks: <strong>EHCI (<code>progif=20</code>)</strong> za USB 2.0 High-Speed, kao i <strong>UHCI (<code>progif=00</code>)</strong> i <strong>OHCI (<code>progif=10</code>)</strong> za USB 1.1 kontrolere.</li>
+            </ul>
+        </li>
+        <li><strong>Logički USB filteri:</strong> 
+            <ul>
+                <li><code>usbhub</code> – Drajver za detekciju eksternih čvorišta i praćenje promene stanja na portovima.</li>
+                <li><code>usbmid</code> – Razdelnik složenih (Composite) USB uređaja (Skor: 100). Razbija kombinovane uređaje na nezavisne tastature i miševe.</li>
+                <li><code>usbdiag</code> / <code>usbflbk</code> – Dijagnostički protokoli visokog prioriteta i generički sigurnosni filteri.</li>
+                <li><code>vhc</code> / <code>vhcold</code> – Potpuno softverski definisani virtuelni USB kontroleri u RAM memoriji za testiranje bez prisustva hardvera.</li>
+            </ul>
+        </li>
+        <li><strong>Alternativni mostovi:</strong> Sun Microsystems <strong>EBUS Bridge (<code>108e:1000</code>)</strong> i Apple <strong>CUDA ADB (<code>cuda_adb</code>)</strong> za PowerPC/MIPS platforme.</li>
+    </ul>
+
+    <h2>5. Ulazni uređaji i Grafika (Char & FB Group)</h2>
+    <ul>
+        <li><strong>i8042 (Tastatura i miš):</strong> Master kontroler za standardne PS/2 ulazne uređaje na ISA magistrali (Portovi <code>0x60</code> i <code>0x64</code>, IRQ 1/12). Ima najviši prioritet uparivanja (Skor: 100).</li>
+        <li><strong>ns8250 (Serijski port):</strong> Upravlja standardnim UART COM1 interfejsom (Port <code>0x3F8</code>, IRQ 4). Zadužen za preusmeravanje ranih sistemskih logova na QEMU <code>-serial stdio</code> konzolu.</li>
+        <li><strong>amdm37x_dispc (Grafički kontroler):</strong> Nativna podrška za napredni Texas Instruments AMDM37x displej kontroler (DISPC) na ARM Cortex-A8 (BeagleBoard-xM) arhitekturama, koji omogućava direktno blitovanje piksela iz memorije.</li>
+    </ul>
+
+</body>
+</html>
