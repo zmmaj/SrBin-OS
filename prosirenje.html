@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <title>SrBin OS - Uputstvo</title>
+</head>
+<body>
+    <h1>📖 ZVANIČNO UPUTSTVO: Kreiranje i upotreba trajnog skladišta u SrBin OS-u</h1>
+    <p>Kada se SrBin OS podigne isključivo sa CD-ROM slike (image.iso), sve izmene koje napravite unutar sistema brišu se nakon gašenja virtuelne mašine. Da biste imali trajno skladište za svoje dokumente, pesme i rad, ili da biste instalirali kompletan OS na prenosivi medijum, ispratite korake u nastavku.</p>
+    <p>Standardna komanda za pokretanje čistog sistema sa CD-ROM-a izgleda ovako:</p>
+    <pre>qemu-system-x86_64 -m 2G -enable-kvm -device e1000,netdev=n1 -netdev user,id=n1,hostfwd=udp::8080-:8080,hostfwd=udp::8081-:8081,hostfwd=tcp::8080-:8080,hostfwd=tcp::8081-:8081,hostfwd=tcp::2223-:2223 -usb -device nec-usb-xhci,id=xhci -device usb-tablet -device intel-hda -device hda-duplex -serial stdio -boot d -cdrom image.iso</pre>
+    
+    <h3>🛠️ Skripta za brzu pripremu medijuma (Ubuntu/Linux domaćin)</h3>
+    <pre>#!/bin/bash
+echo "[+] Kreiram prazan virtuelni hard disk (hdisk.img) od 100MB..."
+qemu-img create -f raw hdisk.img 100M
+echo "[+] Kreiram praznu virtuelnu USB flešku (fleska_test.img) od 512MB..."
+dd if=/dev/zero of=fleska_test.img bs=1M count=512
+echo "[+] Sve je spremno! Medijumi su uspešno generisani."</pre>
+
+    <h2>DEO 1: Dodavanje trajnog Hard Diska (IDE)</h2>
+    <p>Ova opcija je idealna ako želite sekundarni disk unutar QEMU mašine koji će služiti isključivo za čuvanje vaših dokumenata i podataka.</p>
+    <h3>Korak 1: Pokretanje QEMU-a sa Hard Diskom</h3>
+    <pre>qemu-system-x86_64 -m 2G -enable-kvm -drive file=hdisk.img,index=0,media=disk,format=raw -device e1000,netdev=n1 -netdev user,id=n1,hostfwd=udp::8080-:8080,hostfwd=udp::8081-:8081,hostfwd=tcp::8080-:8080,hostfwd=tcp::8081-:8081,hostfwd=tcp::2223-:2223 -usb -device nec-usb-xhci,id=xhci -device usb-tablet -device intel-hda -device hda-duplex -serial stdio -boot d -cdrom image.iso</pre>
+    <h3>Korak 2: Priprema i formatiranje unutar SrBin OS-a</h3>
+    <ol>
+        <li>Pokrenite program za particione tabele: fdisk</li>
+        <li>Izaberite broj koji odgovara vašem hard disku hdisk.img.</li>
+        <li>Izaberite opciju 1: Create Label, a zatim 1: MBR.</li>
+        <li>Izaberite 1: Create primary partition i pritisnite Enter da particija zauzme ceo prostor.</li>
+        <li>Za tip fajl sistema izaberite Ext4 (samo pritisnite Enter).</li>
+        <li>Na pitanje Enter volume label... — ukucajte ime Skladiste i pritisnite Enter.</li>
+        <li>Na pitanje Enter mount point... — ukucajte Auto i pritisnite Enter.</li>
+        <li>Izaberite opciju 4: Exit da sačuvate izmene na disk.</li>
+        <li>Formatirajte particiju unošenjem komande: mkext4 devices/\hw\sys\00:01.1\c0d0p1</li>
+    </ol>
+
+    <h2>DEO 2: Dodavanje USB Fleške i Instalacija Sistema</h2>
+    <p>Ova opcija omogućava emulaciju prave eksterne fleške. Na nju možete instalirati kompletan operativni sistem preko aplikacije Flash_install, tako da vam sledeći put više uopšte ne treba CD-ROM slika.</p>
+    <h3>Korak 1: Pokretanje QEMU-a sa ubačenom Fleškom</h3>
+    <pre>qemu-system-x86_64 -m 2G -enable-kvm -drive file=fleska_test.img,format=raw,if=none,id=usb_fleska -device usb-storage,drive=usb_fleska -device e1000,netdev=n1 -netdev user,id=n1,hostfwd=udp::8080-:8080,hostfwd=udp::8081-:8081,hostfwd=tcp::8080-:8080,hostfwd=tcp::8081-:8081,hostfwd=tcp::2223-:2223 -usb -device nec-usb-xhci,id=xhci -device usb-tablet -device intel-hda -device hda-duplex -serial stdio -boot d -cdrom image.iso</pre>
+    <h3>Korak 2: Instalacija kompletnog SrBin OS-a na flešku</h3>
+    <ol>
+        <li>Unutar pokrenutog SrBin OS-a, otvorite terminal i pokrenite instalacionu aplikaciju: Flash_install</li>
+        <li>Izaberite vašu detektovanu flešku na USB stazi: devices/\hw\sys\00:01.2\usb1-fs\mass-storage0\I0p1</li>
+        <li>Aplikacija će prebaciti kompletan sistem direktno na nju. Kada se završi, ugasite virtuelnu mašinu.</li>
+    </ol>
+    <h3>Korak 3: Pokretanje direktno sa fleške (Bez CD-ROM-a)</h3>
+    <pre>qemu-system-x86_64 -m 2G -enable-kvm -drive file=fleska_test.img,index=0,media=disk,format=raw -device e1000,netdev=n1 -netdev user,id=n1,hostfwd=udp::8080-:8080,hostfwd=udp::8081-:8081,hostfwd=tcp::8080-:8080,hostfwd=tcp::8081-:8081,hostfwd=tcp::2223-:2223 -usb -device nec-usb-xhci,id=xhci -device usb-tablet -device intel-hda -device hda-duplex -serial stdio -boot c</pre>
+
+    <h2>🛑 VAŽNA NAPOMENA: Bezbedno isključivanje (unmount)</h2>
+    <p>Pre nego što zatvorite QEMU prozor, obavezno bezbedno demontirajte diskove da podaci ne bi ostali privremeno zaključani u kešu:</p>
+    <ol>
+        <li>Zatvorite Navigator ako gledate sadržaj diska.</li>
+        <li>U terminalu izađite iz tog direktorijuma (cd /).</li>
+        <li>Izvršite komandu: unmount /vol/Skladiste</li>
+    </ol>
+    <p>Ako sistem javi grešku EBUSY, to znači da vam je neki program (poput tekst editora ili Navigatora) ostao otvoren i drži datoteke na disku — zatvorite taj program/prozor i pokušajte ponovo.</p>
+</body>
+</html>
